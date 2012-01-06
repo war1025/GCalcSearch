@@ -64,13 +64,13 @@ CalcProvider.prototype = {
 
 
 	_validExpression: function(expression) {
-		return /[0-9('pi')+\-*\/^!]+/.test(expression);
+		return /([0-9+\-*\/^!]|'pi')+/.test(expression);
 	},
 
     getInitialResultSet: function(terms) {
         let expr = terms.join(" ");
-        expr = expr.replace(/'pi'/g, "\u03C0");
         if (this._validExpression(expr)) {
+			expr = expr.replace(/'pi'/g, "\u03C0");
             try {
 				let [success, out, err, error] = GLib.spawn_sync(null, ["gcalctool", "-s", expr], null, 4, null)
 				if(error == 0) {
