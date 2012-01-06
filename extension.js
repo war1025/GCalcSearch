@@ -10,6 +10,23 @@ const ICON_SIZE = 81;
 
 let calcProvider = "";
 
+let octal = /(^|\s|[^0-9a-fA-Fxb]+)0([0-7]+)/g;
+let binary = /(^|\s|[^0-9a-fA-Fxb]+)0b([0-1]+)/g;
+let hex = /(^|\s|[^0-9a-fA-Fxb]+)0x([0-9a-fA-F]+)/g;
+
+let changeBase = /in (hex|octal|binary)$/i;
+let bases = {
+	"hex" : 16,
+	"octal" : 8,
+	"binary" : 2
+};
+let prefixes = {
+	"16" : "0x",
+	"10" : "",
+	"8" : "0",
+	"2" : "0b"
+};
+
 function CalcResult(result) {
     this._init(result);
 }
@@ -62,19 +79,52 @@ CalcProvider.prototype = {
         Search.SearchProvider.prototype._init.call(this, title);
     },
 
+    _convertTable : ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"],
+
+	_toBase: function(number, base) {
+		number = Math.floor(number);
+		var string = "";
+		var term = 1;
+		while(term < number) {
+			term *= base;
+		}
+		term /= base;
+		while(term > 1) {
+			string += this._convertTable[Math.floor(number / term)];
+			number = number % term;
+			term /= base;
+		}
+		string += this._convertTable[Math.floor(number)];
+		if(string == "") {
+			string = "0";
+		}
+		return string;
+	},
 
 	_validExpression: function(expression) {
-		return /([0-9+\-*\/^!]|'pi')+/.test(expression);
+		return /([0-9+\-*\/^!]|'pi')+/i.test(expression);
 	},
 
     getInitialResultSet: function(terms) {
         let expr = terms.join(" ");
+        let finalBase = 10;
         if (this._validExpression(expr)) {
-			expr = expr.replace(/'pi'/g, "\u03C0");
+			expr = expr.replace(/'pi'/gi, "\u03C0");
+			expr = expr.replace(octal, "$1$2\u2088");
+			expr = expr.replace(hex, "$1$2\u2081\u2086");
+			expr = expr.replace(binary, "$1$2\u2082");
+            if(changeBase.test(expr)) {
+				finalBase = bases[changeBase.exec(expr)[1]];
+				expr = expr.replace(changeBase, "");
+			}
             try {
 				let [success, out, err, error] = GLib.spawn_sync(null, ["gcalctool", "-s", expr], null, 4, null)
 				if(error == 0) {
-					return [{'expr': expr, 'result': out.toString()}];
+					let result = out.toString();
+					if(finalBase != 10) {
+						result = this._toBase(result, finalBase);
+					}
+					return [{'expr': expr, 'result': prefixes[finalBase] + result}];
 				}
             } catch(exp) {
             }
