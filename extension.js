@@ -127,7 +127,6 @@ CalcProvider.prototype = {
 						// the result as a negative number.
 						if(result[0] == "\u2212") {
 							result = result.substring(1);
-							global.log(result);
 							neg = true;
 						}
 						result = this._toBase(result, finalBase);
@@ -136,6 +135,7 @@ CalcProvider.prototype = {
 							result = "\u2212" + result;
 						}
 					}
+					this._lastResult = result;
 					return [{'expr': expr, 'result': result}];
 				}
             } catch(exp) {
@@ -172,6 +172,9 @@ CalcProvider.prototype = {
     },
 
     activateResult: function(resultId) {
+		if(this._lastResult) {
+			St.Clipboard.get_default().set_text(this._lastResult);
+		}
         return true;
     }
 }
