@@ -122,9 +122,21 @@ CalcProvider.prototype = {
 				if(error == 0) {
 					let result = out.toString();
 					if(finalBase != 10) {
+						let neg = false;
+						// \u2212 is a minus sign. Since it's unicode javascript doesn't recognize
+						// the result as a negative number.
+						if(result[0] == "\u2212") {
+							result = result.substring(1);
+							global.log(result);
+							neg = true;
+						}
 						result = this._toBase(result, finalBase);
+						result = prefixes[finalBase] + result;
+						if(neg) {
+							result = "\u2212" + result;
+						}
 					}
-					return [{'expr': expr, 'result': prefixes[finalBase] + result}];
+					return [{'expr': expr, 'result': result}];
 				}
             } catch(exp) {
             }
