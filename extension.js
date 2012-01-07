@@ -173,7 +173,7 @@ CalcProvider.prototype = {
 
     activateResult: function(resultId) {
 		if(this._lastResult) {
-			St.Clipboard.get_default().set_text(this._lastResult);
+			St.Clipboard.get_default().set_text(this._lastResult.replace("\n",""));
 		}
         return true;
     }
