@@ -85,7 +85,7 @@ CalcProvider.prototype = {
 		number = Math.floor(number);
 		var string = "";
 		var term = 1;
-		while(term < number) {
+		while(term <= number) {
 			term *= base;
 		}
 		term /= base;
