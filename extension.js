@@ -10,7 +10,7 @@ const ICON_SIZE = 81;
 
 let calcProvider = "";
 
-let octal = /(^|\s|[^0-9a-fA-Fxb]+)0([0-7]+)/g;
+let octal = /(^|\s|[^0-9a-fA-Fxb\.]+)0([0-7]+)/g;
 let binary = /(^|\s|[^0-9a-fA-Fxb]+)0b([0-1]+)/g;
 let hex = /(^|\s|[^0-9a-fA-Fxb]+)0x([0-9a-fA-F]+)/g;
 
