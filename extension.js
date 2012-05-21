@@ -58,7 +58,7 @@ CalcResult.prototype = {
         content.add(result, { x_fill: true, x_align: St.Align.START });
 
         let exprLabel = new St.Label({ text: resultMeta.expr,
-                                         style_class: 'result-expr' });
+                                         style_class: 'result-expression' });
         let resultLabel = new St.Label({ text: resultMeta.result,
                                          style_class: 'result-result' });
 
@@ -149,12 +149,12 @@ CalcProvider.prototype = {
         return this.getInitialResultSet(terms);
     },
 
-    getResultMeta: function(result) {
-        return {
-            'id': 0,
-            'result': result.result,
-            'expr': result.expr
-        };
+    getResultMetas: function(result) {
+		let metas = [];
+		for(let i = 0; i < result.length; i++) {
+			metas.push({'id' : i, 'result' : result[i].result, 'expr' : result[i].expr});
+		}
+        return metas;
     },
 
     createResultActor: function(resultMeta, terms) {

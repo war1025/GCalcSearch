@@ -1,7 +1,7 @@
 {
-	"shell-version": ["3.3", "3.2.1", "3.2"], 
-	"uuid": "gcalc-search@wrowclif.org", 
-	"name": "GCalcSearch", 
+	"shell-version": ["3.3", "3.4"],
+	"uuid": "gcalc-search@wrowclif.org",
+	"name": "GCalcSearch",
 	"description": "Search provider using gcalctool to perform calculations",
-	"url" : "https://github.com/war1025/GCalcSearch"	
+	"url" : "https://github.com/war1025/GCalcSearch"
 }
