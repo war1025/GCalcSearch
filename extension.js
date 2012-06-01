@@ -106,7 +106,9 @@ CalcProvider.prototype = {
 	},
 
     getInitialResultSet: function(terms) {
-        let expr = terms.join(" ");
+        // Join everything together, then replace commas with periods to support
+        // Using a comma as a decimal point
+        let expr = terms.join(" ").replace(/,/g, ".");
         let finalBase = 10;
         if (this._validExpression(expr)) {
 			expr = expr.replace(/'pi'/gi, "\u03C0");
