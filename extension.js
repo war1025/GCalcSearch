@@ -33,17 +33,15 @@ function CalcResult(result) {
 
 CalcResult.prototype = {
     _init: function(resultMeta) {
-
         this.actor = new St.Bin({ style_class: 'contact',
                                   reactive: true,
                                   track_hover: true });
 
         let content = new St.BoxLayout( { style_class: 'contact-content',
                                           vertical: false });
-        this.actor.set_child(content);
 
-        let icon = new St.Icon({ icon_type: St.IconType.FULLCOLOR,
-                                 icon_size: ICON_SIZE,
+        this.actor.set_child(content);
+        let icon = new St.Icon({ icon_size: ICON_SIZE,
                                  icon_name: 'accessories-calculator',
                                  style_class: 'contact-icon' });
 
@@ -64,6 +62,7 @@ CalcResult.prototype = {
 
         result.add(exprLabel, { x_fill: false, x_align: St.Align.START });
         result.add(resultLabel, { x_fill: false, x_align: St.Align.START });
+		result.set_width(400);
     }
 
 };
@@ -106,8 +105,8 @@ CalcProvider.prototype = {
 	},
 
     getInitialResultSet: function(terms) {
-        // Join everything together, then replace commas with periods to support
-        // Using a comma as a decimal point
+		// Join everything together, then replace commas with periods to support
+		// Using a comma as a decimal point
         let expr = terms.join(" ").replace(/,/g, ".");
         let finalBase = 10;
         if (this._validExpression(expr)) {
@@ -138,12 +137,15 @@ CalcProvider.prototype = {
 						}
 					}
 					this._lastResult = result;
+					this.searchSystem.pushResults(this,
+							[{'expr': expr, 'result': result}]);
 					return [{'expr': expr, 'result': result}];
 				}
             } catch(exp) {
             }
         }
 
+		this.searchSystem.pushResults(this, []);
         return [];
     },
 
@@ -151,11 +153,12 @@ CalcProvider.prototype = {
         return this.getInitialResultSet(terms);
     },
 
-    getResultMetas: function(result) {
+    getResultMetas: function(result, callback) {
 		let metas = [];
 		for(let i = 0; i < result.length; i++) {
 			metas.push({'id' : i, 'result' : result[i].result, 'expr' : result[i].expr});
 		}
+		callback(metas);
         return metas;
     },
 
