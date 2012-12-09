@@ -14,6 +14,9 @@ let octal = /(^|\s|[^0-9a-fA-Fxb\.]+)0([0-7]+)/g;
 let binary = /(^|\s|[^0-9a-fA-Fxb]+)0b([0-1]+)/g;
 let hex = /(^|\s|[^0-9a-fA-Fxb]+)0x([0-9a-fA-F]+)/g;
 
+let radians = /r(sin|cos|tan)\(/g;
+let radians2 = /ra(sin|cos|tan)\(/g;
+
 let changeBase = /in (hex|octal|binary)$/i;
 let bases = {
 	"hex" : 16,
@@ -114,6 +117,8 @@ CalcProvider.prototype = {
 			expr = expr.replace(octal, "$1$2\u2088");
 			expr = expr.replace(hex, "$1$2\u2081\u2086");
 			expr = expr.replace(binary, "$1$2\u2082");
+			expr = expr.replace(radians, "$1((180/\u03C0) *");
+			expr = expr.replace(radians2, "(\u03C0/180) * a$1(");
             if(changeBase.test(expr)) {
 				finalBase = bases[changeBase.exec(expr)[1]];
 				expr = expr.replace(changeBase, "");
