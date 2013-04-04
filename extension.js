@@ -4,6 +4,7 @@ const Search = imports.ui.search;
 const SearchDisplay = imports.ui.searchDisplay;
 const IconGrid = imports.ui.iconGrid;
 const GLib = imports.gi.GLib;
+const Lang = imports.lang;
 
 const MAX_SEARCH_RESULTS_ROWS = 1;
 const ICON_SIZE = 81;
@@ -70,15 +71,11 @@ CalcResult.prototype = {
 
 };
 
-function CalcProvider() {
-    this._init.apply(this, arguments);
-}
-
-CalcProvider.prototype = {
-    __proto__: Search.SearchProvider.prototype,
+const CalcProvider = new Lang.Class({
+    Name: 'CalcProvider',
 
     _init: function(title) {
-        Search.SearchProvider.prototype._init.call(this, title);
+        this.id = title;
     },
 
     _convertTable : ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"],
@@ -124,9 +121,9 @@ CalcProvider.prototype = {
 				expr = expr.replace(changeBase, "");
 			}
             try {
-				let [success, out, err, error] = GLib.spawn_sync(null, ["gcalctool", "-s", expr], null, 4, null)
+				let [success, out, err, error] = GLib.spawn_sync(null, ["gnome-calculator", "-s", expr], null, 4, null)
 				if(error == 0) {
-					let result = out.toString();
+                    let result = out.toString();
 					if(finalBase != 10) {
 						let neg = false;
 						// \u2212 is a minus sign. Since it's unicode javascript doesn't recognize
@@ -143,15 +140,14 @@ CalcProvider.prototype = {
 					}
 					this._lastResult = result;
 					this.searchSystem.pushResults(this,
-							[{'expr': expr, 'result': result}]);
-					return [{'expr': expr, 'result': result}];
+							[{'id': expr, 'expr': expr, 'result': result}]);
+				    return;
 				}
             } catch(exp) {
             }
         }
 
 		this.searchSystem.pushResults(this, []);
-        return [];
     },
 
     getSubsearchResultSet: function(prevResults, terms) {
@@ -187,7 +183,7 @@ CalcProvider.prototype = {
 		}
         return true;
     }
-}
+});
 
 function init() {
     calcProvider = new CalcProvider('CALCULATOR');

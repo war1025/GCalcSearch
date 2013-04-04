@@ -1,5 +1,5 @@
 {
-	"shell-version": ["3.5", "3.6"],
+	"shell-version": ["3.8"],
 	"uuid": "gcalc-search@wrowclif.org",
 	"name": "GCalcSearch",
 	"description": "Search provider using gcalctool to perform calculations",
